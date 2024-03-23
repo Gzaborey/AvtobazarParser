@@ -4,12 +4,12 @@ from urllib.parse import urlparse
 import re
 
 
-def get_telephone_number(soup: BeautifulSoup) -> str:
+def get_telephone_number(soup: BeautifulSoup, headers: dict) -> str:
     object_id = soup.find('div', 'ant-row _144Vd').find('span', class_='_TY4k').text
     object_id = re.sub(r'\D', '', object_id)
 
     url = f'https://avtobazar.ua/api/_posts/{object_id}/phones/'
-    request = requests.get(url)
+    request = requests.get(url=url, headers=headers)
     result = ', '.join(request.json())
     return result
 
@@ -18,7 +18,7 @@ def get_links_from_page(url: str, headers: dict) -> list[str]:
     netloc = urlparse(url).netloc
     scheme = urlparse(url).scheme
 
-    request = requests.get(url, headers=headers)
+    request = requests.get(url=url, headers=headers)
 
     html = request.text
     soup = BeautifulSoup(html, 'lxml')
@@ -53,7 +53,7 @@ def parse_vehicle_page(url: str, headers: dict) -> dict:
         vehicle_info_dict['price'] = 'Unknown price'
 
     try:
-        owner_telephone_number = get_telephone_number(soup)
+        owner_telephone_number = get_telephone_number(soup, headers=headers)
         vehicle_info_dict['telephone_number'] = owner_telephone_number.strip()
     except AttributeError:
         owner_telephone_number = 'Unknown telephone number'
@@ -62,5 +62,4 @@ def parse_vehicle_page(url: str, headers: dict) -> dict:
     vehicle_card = soup.find_all('div', class_='heJ1W')
     for category in vehicle_card:
         vehicle_info_dict[list(category.children)[0].text] = list(category.children)[1].text.strip()
-
     return vehicle_info_dict
