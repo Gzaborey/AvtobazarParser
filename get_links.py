@@ -1,6 +1,17 @@
 import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse
+import re
+
+
+def get_telephone_number(soup: BeautifulSoup) -> str:
+    object_id = soup.find('div', 'ant-row _144Vd').find('span', class_='_TY4k').text
+    object_id = re.sub(r'\D', '', object_id)
+
+    url = f'https://avtobazar.ua/api/_posts/{object_id}/phones/'
+    request = requests.get(url)
+    result = ', '.join(request.json())
+    return result
 
 
 def get_links_from_page(url: str, headers: dict) -> list[str]:
@@ -28,17 +39,28 @@ def parse_vehicle_page(url: str, headers: dict) -> dict:
 
     vehicle_info_dict = {}
 
-    vehicle_title = soup.find('div', class_='_32c5u').text
-    vehicle_info_dict['title'] = vehicle_title
+    try:
+        vehicle_title = soup.find('div', class_='_32c5u').text
+        vehicle_info_dict['title'] = vehicle_title.strip()
+    except AttributeError:
+        vehicle_info_dict['title'] = 'No title'
 
-    vehicle_price = soup.find('div', class_='_2izCF').text
-    vehicle_info_dict['price'] = vehicle_price
+    try:
+        vehicle_price = soup.find('div', class_='_2izCF').text
+        vehicle_price = re.sub(r'\D', '', vehicle_price)
+        vehicle_info_dict['price'] = vehicle_price.strip()
+    except AttributeError:
+        vehicle_info_dict['price'] = 'Unknown price'
 
-    vehicle_location = soup.find('span', class_='_27p5n').text
-    vehicle_info_dict['location'] = vehicle_location
+    try:
+        owner_telephone_number = get_telephone_number(soup)
+        vehicle_info_dict['telephone_number'] = owner_telephone_number.strip()
+    except AttributeError:
+        owner_telephone_number = 'Unknown telephone number'
+        vehicle_info_dict['telephone_number'] = owner_telephone_number
 
     vehicle_card = soup.find_all('div', class_='heJ1W')
     for category in vehicle_card:
-        vehicle_info_dict[list(category.children)[0].text] = list(category.children)[1].text
+        vehicle_info_dict[list(category.children)[0].text] = list(category.children)[1].text.strip()
 
     return vehicle_info_dict
