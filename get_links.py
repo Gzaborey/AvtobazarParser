@@ -4,6 +4,13 @@ from urllib.parse import urlparse
 import re
 
 
+def get_last_page_number(url: str, headers: dict) -> int:
+    request = requests.get(url)
+    html = request.text
+    soup = BeautifulSoup(html, 'lxml')
+    last_page_number = soup.find('ul', class_='UXnXg').find_all('li')[-2].text
+    return int(last_page_number)
+
 def get_telephone_number(soup: BeautifulSoup, headers: dict) -> str:
     object_id = soup.find('div', 'ant-row _144Vd').find('span', class_='_TY4k').text
     object_id = re.sub(r'\D', '', object_id)
