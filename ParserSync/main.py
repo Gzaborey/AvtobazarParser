@@ -1,9 +1,10 @@
 import json
 from tqdm import tqdm
-from get_links import parse_vehicle_page
-from get_links import get_links_from_page
-from get_links import get_last_page_number
+from ParserSync.get_links import parse_vehicle_page
+from ParserSync.get_links import get_links_from_page
+from ParserSync.get_links import get_last_page_number
 from IPython.display import clear_output
+import time
 
 
 def main():
@@ -16,12 +17,16 @@ def main():
 
     vehicle_data = []
     last_page_number = get_last_page_number(url=url, headers=headers)
-    for page_number in range(1, last_page_number):
+    for page_number in range(1, 2):
         print(f'Iteration: {page_number} started')
 
-        url = f'https://avtobazar.ua/uk/avto/?page={page_number}'
-        vehicle_links_on_page = get_links_from_page(url=url, headers=headers)
-        print(f'Links collected: {len(vehicle_links_on_page)}')
+        try:
+            url = f'https://avtobazar.ua/uk/avto/?page={page_number}'
+            vehicle_links_on_page = get_links_from_page(url=url, headers=headers)
+            print(f'Links collected: {len(vehicle_links_on_page)}')
+        except AttributeError:
+            print('Something went wrong on this iteration!')
+            continue
 
         for link in tqdm(vehicle_links_on_page, desc='Parsing vehicle pages'):
             vehicle_info = parse_vehicle_page(url=link, headers=headers)
@@ -29,9 +34,12 @@ def main():
 
         clear_output(wait=True)
 
-    with open('vehicle_data.json', 'w', encoding='utf-8') as f:
+    with open('data/vehicle_data.json', 'w', encoding='utf-8') as f:
         json.dump(vehicle_data, f, indent=4, ensure_ascii=False)
 
 
 if __name__ == '__main__':
+    start_time = time.time()
     main()
+    finish_time = time.time() - start_time
+    print(f'Time spent: {finish_time}')
