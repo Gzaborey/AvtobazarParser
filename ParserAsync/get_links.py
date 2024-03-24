@@ -4,7 +4,6 @@ from urllib.parse import urlparse
 import re
 import asyncio
 import aiohttp
-import json
 
 
 def get_last_page_number(url: str, headers: dict) -> int:
@@ -88,9 +87,9 @@ async def get_vehicle_data(url: str, headers: dict):
         for response in responses:
             html_pages.append(await response.text())
 
+    vehicle_data = []
     for html in html_pages:
         soup = BeautifulSoup(html, 'lxml')
-        vehicle_data = parse_vehicle_page(soup=soup, headers=headers)
+        vehicle_data.append(parse_vehicle_page(soup=soup, headers=headers))
 
-        with open('data/vehicle_data.json', 'a', encoding='utf-8') as f:
-            json.dump(vehicle_data, f, indent=4, ensure_ascii=False)
+    return vehicle_data

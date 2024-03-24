@@ -1,6 +1,7 @@
 from ParserSync.get_links import get_last_page_number
 import asyncio
 import time
+import json
 from get_links import get_vehicle_data
 
 
@@ -11,17 +12,21 @@ def main():
         "Accept": "*/*"
     }
     url = f'https://avtobazar.ua/uk/avto/?page=1'
-
     last_page_number = get_last_page_number(url=url, headers=headers)
+
+    vehicle_data = []
     for page_number in range(1, last_page_number):
         print(f'Iteration: {page_number} started')
 
         try:
             url = f'https://avtobazar.ua/uk/avto/?page={page_number}'
-            asyncio.run(get_vehicle_data(url=url, headers=headers))
+            vehicle_data += asyncio.run(get_vehicle_data(url=url, headers=headers))
         except AttributeError:
-            print('Broken iteration!')
+            print('Something went wrong on this iteration!')
             continue
+
+    with open('D:/Projects/Programming/AvtobazarParser/data/vehicle_data.json', 'w', encoding='utf-8') as f:
+        json.dump(vehicle_data, f, indent=4, ensure_ascii=False)
 
 
 if __name__ == '__main__':

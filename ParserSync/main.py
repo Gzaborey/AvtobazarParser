@@ -34,7 +34,7 @@ def main():
 
         clear_output(wait=True)
 
-    with open('data/vehicle_data.json', 'w', encoding='utf-8') as f:
+    with open('D:/Projects/Programming/AvtobazarParser/data/vehicle_data.json', 'w', encoding='utf-8') as f:
         json.dump(vehicle_data, f, indent=4, ensure_ascii=False)
 
 
