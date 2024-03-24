@@ -1,7 +1,7 @@
 from ParserSync.get_links import get_last_page_number
 import asyncio
 import time
-from get_links_async import get_vehicle_data
+from get_links import get_vehicle_data
 
 
 def main():
@@ -13,7 +13,7 @@ def main():
     url = f'https://avtobazar.ua/uk/avto/?page=1'
 
     last_page_number = get_last_page_number(url=url, headers=headers)
-    for page_number in range(1, 2):
+    for page_number in range(1, last_page_number):
         print(f'Iteration: {page_number} started')
 
         try:

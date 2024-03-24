@@ -17,7 +17,7 @@ def main():
 
     vehicle_data = []
     last_page_number = get_last_page_number(url=url, headers=headers)
-    for page_number in range(1, 2):
+    for page_number in range(1, last_page_number):
         print(f'Iteration: {page_number} started')
 
         try:
