@@ -1,3 +1,4 @@
+import numpy as np
 from ParserSync.get_links import get_last_page_number
 import asyncio
 import time
@@ -14,19 +15,21 @@ def main():
     url = f'https://avtobazar.ua/uk/avto/?page=1'
     last_page_number = get_last_page_number(url=url, headers=headers)
 
-    vehicle_data = []
-    for page_number in range(1, last_page_number):
+    for page_number in range(1, last_page_number + 1):
         print(f'Iteration: {page_number} started')
 
         try:
             url = f'https://avtobazar.ua/uk/avto/?page={page_number}'
-            vehicle_data += asyncio.run(get_vehicle_data(url=url, headers=headers))
+            vehicle_data = asyncio.run(get_vehicle_data(url=url, headers=headers))
         except AttributeError:
             print('Something went wrong on this iteration!')
             continue
 
-    with open('D:/Projects/Programming/AvtobazarParser/data/vehicle_data.json', 'w', encoding='utf-8') as f:
-        json.dump(vehicle_data, f, indent=4, ensure_ascii=False)
+        with open(f'D:/Projects/Programming/AvtobazarParser/data/vehicle_data_page{page_number}.json',
+                  'w', encoding='utf-8') as f:
+            json.dump(vehicle_data, f, indent=4, ensure_ascii=False)
+
+        time.sleep(np.random.randint(2, 4))
 
 
 if __name__ == '__main__':

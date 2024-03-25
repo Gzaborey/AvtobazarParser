@@ -17,7 +17,7 @@ def main():
 
     vehicle_data = []
     last_page_number = get_last_page_number(url=url, headers=headers)
-    for page_number in range(1, last_page_number):
+    for page_number in range(1, last_page_number + 1):
         print(f'Iteration: {page_number} started')
 
         try:
@@ -34,7 +34,8 @@ def main():
 
         clear_output(wait=True)
 
-    with open('D:/Projects/Programming/AvtobazarParser/data/vehicle_data.json', 'w', encoding='utf-8') as f:
+    with open('D:/Projects/Programming/AvtobazarParser/data/vehicle_data.json',
+              'w', encoding='utf-8') as f:
         json.dump(vehicle_data, f, indent=4, ensure_ascii=False)
 
 
