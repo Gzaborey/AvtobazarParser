@@ -12,20 +12,20 @@ def main():
         (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36""",
         "Accept": "*/*"
     }
-    url = f'https://avtobazar.ua/uk/avto/?page=1'
+    url = f'https://avtobazar.ua/uk/avto/?page=1&period=month'
     last_page_number = get_last_page_number(url=url, headers=headers)
 
     for page_number in range(1, last_page_number + 1):
         print(f'Iteration: {page_number} started')
 
         try:
-            url = f'https://avtobazar.ua/uk/avto/?page={page_number}'
+            url = f'https://avtobazar.ua/uk/avto/?page={page_number}&period=month'
             vehicle_data = asyncio.run(get_vehicle_data(url=url, headers=headers))
         except AttributeError:
             print('Something went wrong on this iteration!')
             continue
 
-        with open(f'D:/Projects/Programming/AvtobazarParser/data/vehicle_data_page{page_number}.json',
+        with open(f'D:/Projects/Programming/AvtobazarParser/data/vehicle_data_last_month/vehicle_data_page{page_number}.json',
                   'w', encoding='utf-8') as f:
             json.dump(vehicle_data, f, indent=4, ensure_ascii=False)
 

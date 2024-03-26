@@ -14,16 +14,6 @@ def get_last_page_number(url: str, headers: dict) -> int:
     return int(last_page_number)
 
 
-def get_telephone_number(soup: BeautifulSoup, headers: dict) -> str:
-    object_id = soup.find('div', 'ant-row _144Vd').find('span', class_='_TY4k').text
-    object_id = re.sub(r'\D', '', object_id)
-
-    url = f'https://avtobazar.ua/api/_posts/{object_id}/phones/'
-    request = requests.get(url=url, headers=headers)
-    telephone_number = ', '.join(request.json())
-    return telephone_number
-
-
 def get_links_from_page(url: str, headers: dict) -> list[str]:
     netloc = urlparse(url).netloc
     scheme = urlparse(url).scheme
@@ -56,13 +46,6 @@ def parse_vehicle_page(soup: BeautifulSoup, headers: dict) -> dict:
         vehicle_info_dict['price'] = vehicle_price.strip()
     except AttributeError:
         vehicle_info_dict['price'] = 'Unknown price'
-
-    try:
-        owner_telephone_number = get_telephone_number(soup, headers=headers)
-        vehicle_info_dict['telephone_number'] = owner_telephone_number.strip()
-    except AttributeError:
-        owner_telephone_number = 'Unknown telephone number'
-        vehicle_info_dict['telephone_number'] = owner_telephone_number
 
     vehicle_card = soup.find_all('div', class_='heJ1W')
     for category in vehicle_card:
