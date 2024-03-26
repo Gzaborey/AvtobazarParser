@@ -31,7 +31,7 @@ def get_links_from_page(url: str, headers: dict) -> list[str]:
     return vehicle_links_list
 
 
-def parse_vehicle_page(soup: BeautifulSoup, headers: dict) -> dict:
+def parse_vehicle_page(soup: BeautifulSoup) -> dict:
     vehicle_info_dict = {}
 
     try:
