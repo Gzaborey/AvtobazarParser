@@ -73,6 +73,6 @@ async def get_vehicle_data(url: str, headers: dict):
     vehicle_data = []
     for html in html_pages:
         soup = BeautifulSoup(html, 'lxml')
-        vehicle_data.append(parse_vehicle_page(soup=soup, headers=headers))
+        vehicle_data.append(parse_vehicle_page(soup=soup))
 
     return vehicle_data
